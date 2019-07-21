@@ -27,7 +27,7 @@ const Welcome: React.FC<PropsInterface> = ({
 
   return (
     <div className="welcome">
-      {myUserId && <Redirect to={'/chat'} />}
+      {myUserId && <Redirect to={'/room'} />}
       <div className="welcome__card">
         <div className="welcome__card-header">
           Welcome to the Chat App!

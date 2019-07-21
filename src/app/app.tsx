@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 
 import Welcome from './routes/welcome/welcome';
-import Chat from './routes/chat/chat';
+import Room from './routes/room/room';
 
 import './app.scss';
 
@@ -15,7 +15,7 @@ const App: React.FC = () => {
       <Router>
         <Switch>
           <Route path="/welcome" component={Welcome} />
-          <Route path="/chat" component={Chat} />
+          <Route path="/room" component={Room} />
           <Redirect to="/welcome" />
         </Switch>
       </Router>

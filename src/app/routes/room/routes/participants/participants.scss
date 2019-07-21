@@ -1,0 +1,9 @@
+.participants {
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    border-bottom: 1px solid rgba(#a28900, 0.2);
+    padding: 20px;
+  }
+}

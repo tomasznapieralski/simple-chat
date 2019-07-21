@@ -3,27 +3,26 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { AppStateInterface } from '../../store/reducers';
+import { AppStateInterface } from '../../../../store/reducers';
 
-import { getMyUserId} from '../../store/selectors/users';
+import { getMyUserId} from '../../../../store/selectors/users';
 
 import './chat.scss';
 
 interface PropsInterface {
-  myUserId: string | null;
+  // myUserId: string | null;
 }
 
-const Chat: React.FC<PropsInterface> = ({ myUserId }) => {
+const Chat: React.FC<PropsInterface> = ({  }) => {
   return (
     <div className="chat">
-      {!myUserId && <Redirect to={'/welcome'} />}
-      xxx
+      chat
     </div>
   );
 }
 
 const mapStateToProps = (state: AppStateInterface) => ({
-  myUserId: getMyUserId(state),
+  // myUserId: getMyUserId(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
