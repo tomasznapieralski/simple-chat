@@ -1,5 +1,7 @@
 .welcome {
   display: flex;
+  align-items: center;
+  min-height: 80vh;
 
   &__card {
     margin: 20px;
