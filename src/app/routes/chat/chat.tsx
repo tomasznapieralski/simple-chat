@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Dispatch, Action } from 'redux';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
+
+import { AppStateInterface } from '../../store/reducers';
+
+import { getMyUserId} from '../../store/selectors/users';
 
 import './chat.scss';
 
 interface PropsInterface {
-  // props
+  myUserId: string | null;
 }
 
-const Chat: React.FC<PropsInterface> = () => {
+const Chat: React.FC<PropsInterface> = ({ myUserId }) => {
   return (
     <div className="chat">
-      x
+      {!myUserId && <Redirect to={'/welcome'} />}
+      xxx
     </div>
   );
 }
 
-export default Chat;
+const mapStateToProps = (state: AppStateInterface) => ({
+  myUserId: getMyUserId(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
