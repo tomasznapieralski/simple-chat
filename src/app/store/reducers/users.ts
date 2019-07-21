@@ -15,8 +15,19 @@ export interface UsersReducerInterface {
 }
 
 const defaultState: UsersReducerInterface = {
-  data: [],
-  myUserId: null,
+  data: [
+    {
+      id: '720020be-b8f3-4aa6-bf97-aa2046af4d02',
+      name: 'Tomasz',
+      active: true,
+    },
+    {
+      id: 'xxx',
+      name: 'Patryk',
+      active: false,
+    },
+  ],
+  myUserId: '720020be-b8f3-4aa6-bf97-aa2046af4d02',
 };
 
 export default (state = defaultState, action: Action): UsersReducerInterface => {

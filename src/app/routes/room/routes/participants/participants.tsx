@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { AppStateInterface } from '../../../../store/reducers';
 
-import { getData} from '../../../../store/selectors/users';
+import { getActiveUsers } from '../../../../store/selectors/users';
 
 import { UserInterface } from '../../../../store/interfaces/users';
 
@@ -29,7 +29,7 @@ const Participants: React.FC<PropsInterface> = ({ users }) => {
 }
 
 const mapStateToProps = (state: AppStateInterface) => ({
-  users: getData(state),
+  users: getActiveUsers(state),
 });
 
 export default connect(mapStateToProps)(Participants);

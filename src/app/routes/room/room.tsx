@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 import { AppStateInterface } from '../../store/reducers';
 
-import { getMyUserId, getData } from '../../store/selectors/users';
+import { getMyUserId, getActiveUsers } from '../../store/selectors/users';
 
 import { UserInterface } from '../../store/interfaces/users';
 
@@ -61,7 +61,7 @@ const Room: React.FC<PropsInterface> = ({ myUserId, users }) => {
 
 const mapStateToProps = (state: AppStateInterface) => ({
   myUserId: getMyUserId(state),
-  users: getData(state),
+  users: getActiveUsers(state),
 });
 
 export default connect(mapStateToProps)(Room);

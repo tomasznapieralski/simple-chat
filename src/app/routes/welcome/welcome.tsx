@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 
 import { AppStateInterface } from '../../store/reducers';
 
-import { getMyUserId} from '../../store/selectors/users';
+import { getMyUserId } from '../../store/selectors/users';
 
 import {
   welcomeSubmitMyUserName,

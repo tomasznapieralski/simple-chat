@@ -13,15 +13,16 @@ import {
   usersSaveUsers,
 } from '../actions/users';
 
-import { getData } from '../selectors/users';
+import { getAllUsers } from '../selectors/users';
 
 function* createMyUser() {
   yield takeEvery(WELCOME_SUBMIT_MY_USER_NAME, function* (action: WelcomeSubmitMyUserNameAction) {
-    const users: UserInterface[] = yield select(getData);
+    const users: UserInterface[] = yield select(getAllUsers);
     const myUserId = uuid();
     const myUser: UserInterface = {
       name: action.name,
       id: myUserId,
+      active: true,
     };
 
     yield put(usersSaveUsers([

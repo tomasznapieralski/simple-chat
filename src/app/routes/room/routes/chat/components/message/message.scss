@@ -1,0 +1,56 @@
+.message {
+  display: flex;
+  align-items: center;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    border-radius: 15px;
+    background-color: #f7f6f0;
+    font-size: 14px;
+
+    &--owner {
+      background-color: #f5f0d3;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+
+  &__header-name {
+    font-weight: bold;
+  }
+
+  &__header-time {
+    margin-left: 10px;
+    color: grey;
+  }
+
+  &__header-actions {
+    display: flex;
+    margin-left: 15px;
+    flex-shrink: 0;
+  }
+
+  &__header-actions-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    color: #afa897;
+    cursor: pointer;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+
+  &__text {
+    margin-top: 10px;
+  }
+}
