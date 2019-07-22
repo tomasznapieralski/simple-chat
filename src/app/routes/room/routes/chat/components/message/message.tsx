@@ -7,6 +7,8 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { MessageInterface } from '../../../../../../store/interfaces/messages';
 import { UserInterface } from '../../../../../../store/interfaces/users';
 
+import { ChatDeleteMessageAction } from '../../../../../../store/actions/chat';
+
 import './message.scss';
 
 interface PropsInterface {
@@ -15,7 +17,7 @@ interface PropsInterface {
   actionsAllowed: boolean;
   initHandler: () => Action;
   // editHandler: () => void;
-  // deleteHandler: () => void;
+  deleteHandler: (id: string) => ChatDeleteMessageAction;
 }
 
 const Message: React.FC<PropsInterface> = ({
@@ -23,11 +25,14 @@ const Message: React.FC<PropsInterface> = ({
   users,
   actionsAllowed,
   initHandler,
+  deleteHandler,
 }) => {
   const {
     userId,
     text,
     timestamp,
+    id,
+    status,
   } = message;
   const user = users.find(user => user.id === userId);
   const name = (user && user.name) || 'Anonymous';
@@ -49,18 +54,29 @@ const Message: React.FC<PropsInterface> = ({
             {time}
           </div>
         </div>
-        <div className="message__text">
-          {text}
-        </div>
+        {text &&
+          <div className="message__text">
+            {text}
+          </div>
+        }
+        {status === 'deleted' &&
+          <div className="message__text message__text--deleted">
+            Message was deleted...
+          </div>
+        }
       </div>
-      {actionsAllowed &&
+      {actionsAllowed && status !== 'deleted' &&
         <div className="message__header-actions">
-          <div className="message__header-actions-item">
+          <button className="message__header-actions-item">
             <FontAwesomeIcon icon={faEdit} />
-          </div>
-          <div className="message__header-actions-item">
+          </button>
+          <button
+            className="message__header-actions-item"
+            type="button"
+            onClick={() => deleteHandler(id)}
+          >
             <FontAwesomeIcon icon={faTrashAlt} />
-          </div>
+          </button>
         </div>
       }
     </div>

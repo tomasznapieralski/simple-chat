@@ -14,6 +14,8 @@ import {
   chatSubmitText,
   ChatSubmitTextAction,
   chatMessageRendered,
+  chatDeleteMessage,
+  ChatDeleteMessageAction,
 } from '../../../../store/actions/chat';
 
 import Message from './components/message/message';
@@ -27,6 +29,7 @@ interface PropsInterface {
   myUserId: string | null;
   submitTextAction: (text: string) => ChatSubmitTextAction;
   messageRenderedAction: () => Action;
+  deleteMessageAction: (id: string) => ChatDeleteMessageAction;
 }
 
 const Chat: React.FC<PropsInterface> = ({
@@ -35,6 +38,7 @@ const Chat: React.FC<PropsInterface> = ({
   users,
   submitTextAction,
   messageRenderedAction,
+  deleteMessageAction,
 }) => {
   return (
     <div className="chat">
@@ -49,6 +53,7 @@ const Chat: React.FC<PropsInterface> = ({
               users={users}
               actionsAllowed={message.userId === myUserId}
               initHandler={messageRenderedAction}
+              deleteHandler={deleteMessageAction}
             />
           </div>
         )}
@@ -69,6 +74,7 @@ const mapStateToProps = (state: AppStateInterface) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   submitTextAction: (text: string) => dispatch(chatSubmitText(text)),
   messageRenderedAction: () => dispatch(chatMessageRendered()),
+  deleteMessageAction: (id: string) => dispatch(chatDeleteMessage(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

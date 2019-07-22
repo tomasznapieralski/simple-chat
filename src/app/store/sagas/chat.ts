@@ -8,6 +8,8 @@ import {
   ChatSubmitTextAction,
   chatSaveMessages,
   CHAT_MESSAGE_RENDERED,
+  CHAT_DELETE_MESSAGE,
+  ChatDeleteMessageAction,
 } from '../actions/chat';
 
 import { getMessages } from '../selectors/chat';
@@ -32,6 +34,25 @@ function* createMessage() {
   });
 }
 
+function* deleteMessage() {
+  yield takeEvery(CHAT_DELETE_MESSAGE, function* (action: ChatDeleteMessageAction) {
+    const messages: MessageInterface[] = yield select(getMessages);
+    const targetMessageIndex = messages.findIndex(message => message.id === action.id);
+
+    if (targetMessageIndex > -1) {
+      const newMessages = [...messages];
+
+      newMessages[targetMessageIndex] = {
+        ...newMessages[targetMessageIndex],
+        text: '',
+        status: 'deleted',
+      };
+
+      yield put(chatSaveMessages(newMessages));
+    }
+  });
+}
+
 function* scrollToBottom() {
   yield takeEvery(CHAT_MESSAGE_RENDERED, function* () {
     yield window.scroll(0, window.innerHeight);
@@ -40,5 +61,6 @@ function* scrollToBottom() {
 
 export default [
   createMessage(),
+  deleteMessage(),
   scrollToBottom(),
 ];

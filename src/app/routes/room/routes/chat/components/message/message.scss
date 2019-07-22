@@ -42,6 +42,7 @@
     width: 40px;
     height: 40px;
     margin-left: 10px;
+    font-size: 14px;
     color: #afa897;
     cursor: pointer;
 
@@ -53,5 +54,10 @@
   &__text {
     margin-top: 10px;
     white-space: pre-line;
+
+    &--deleted {
+      font-style: italic;
+      color: grey;
+    }
   }
 }
