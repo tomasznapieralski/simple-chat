@@ -38,8 +38,11 @@ const Welcome: React.FC<PropsInterface> = ({
         <form
           className="welcome__card-form"
           onSubmit={(event) => {
+            const trimmedName = name.trim();
+
             event.preventDefault();
-            submitFormAction(name);
+
+            submitFormAction(trimmedName || 'Anonymous');
           }}
         >
           <input
