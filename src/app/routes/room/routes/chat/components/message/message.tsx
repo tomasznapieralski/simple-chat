@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Action } from 'redux';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +13,7 @@ interface PropsInterface {
   message: MessageInterface;
   users: UserInterface[];
   actionsAllowed: boolean;
+  initHandler: () => Action;
   // editHandler: () => void;
   // deleteHandler: () => void;
 }
@@ -20,6 +22,7 @@ const Message: React.FC<PropsInterface> = ({
   message,
   users,
   actionsAllowed,
+  initHandler,
 }) => {
   const {
     userId,
@@ -30,6 +33,10 @@ const Message: React.FC<PropsInterface> = ({
   const name = (user && user.name) || 'Anonymous';
   const dateFromTimestamp = new Date(timestamp);
   const time = `${dateFromTimestamp.getHours()}:${dateFromTimestamp.getMinutes()}`;
+
+  useEffect(() => {
+    initHandler();
+  }, [initHandler]);
 
   return (
     <div className="message">
