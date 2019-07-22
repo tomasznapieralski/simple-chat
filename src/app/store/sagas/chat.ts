@@ -10,6 +10,8 @@ import {
   CHAT_MESSAGE_RENDERED,
   CHAT_DELETE_MESSAGE,
   ChatDeleteMessageAction,
+  CHAT_EDIT_MESSAGE,
+  ChatEditMessageAction,
 } from '../actions/chat';
 
 import { getMessages } from '../selectors/chat';
@@ -31,6 +33,25 @@ function* createMessage() {
       ...messages,
       newMessage,
     ]));
+  });
+}
+
+function* editMessage() {
+  yield takeEvery(CHAT_EDIT_MESSAGE, function* (action: ChatEditMessageAction) {
+    const messages: MessageInterface[] = yield select(getMessages);
+    const targetMessageIndex = messages.findIndex(message => message.id === action.id);
+
+    if (targetMessageIndex > -1) {
+      const newMessages = [...messages];
+
+      newMessages[targetMessageIndex] = {
+        ...newMessages[targetMessageIndex],
+        text: action.text,
+        status: 'edited',
+      };
+
+      yield put(chatSaveMessages(newMessages));
+    }
   });
 }
 
@@ -61,6 +82,7 @@ function* scrollToBottom() {
 
 export default [
   createMessage(),
+  editMessage(),
   deleteMessage(),
   scrollToBottom(),
 ];

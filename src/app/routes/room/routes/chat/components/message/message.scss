@@ -29,6 +29,12 @@
     color: grey;
   }
 
+  &__header-status {
+    font-style: italic;
+    margin-left: 10px;
+    color: grey;
+  }
+
   &__header-actions {
     display: flex;
     margin-left: 15px;
@@ -59,5 +65,17 @@
       font-style: italic;
       color: grey;
     }
+  }
+
+  &__textarea {
+    margin-top: 10px;
+    padding: 10px;
+    height: 76px;
+    border: 1px solid rgba(#a28900, 0.2);
+    border-radius: 4px;
+    font-size: 16px;
+    resize: none;
+    outline: none;
+    appearance: none;
   }
 }

@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Action } from 'redux';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrashAlt, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { MessageInterface } from '../../../../../../store/interfaces/messages';
 import { UserInterface } from '../../../../../../store/interfaces/users';
 
-import { ChatDeleteMessageAction } from '../../../../../../store/actions/chat';
+import {
+  ChatDeleteMessageAction,
+  ChatEditMessageAction,
+} from '../../../../../../store/actions/chat';
 
 import './message.scss';
 
@@ -16,7 +19,7 @@ interface PropsInterface {
   users: UserInterface[];
   actionsAllowed: boolean;
   initHandler: () => Action;
-  // editHandler: () => void;
+  editHandler: (id: string, text: string) => ChatEditMessageAction;
   deleteHandler: (id: string) => ChatDeleteMessageAction;
 }
 
@@ -25,19 +28,17 @@ const Message: React.FC<PropsInterface> = ({
   users,
   actionsAllowed,
   initHandler,
+  editHandler,
   deleteHandler,
 }) => {
-  const {
-    userId,
-    text,
-    timestamp,
-    id,
-    status,
-  } = message;
+  const { userId, text, timestamp, id, status } = message;
   const user = users.find(user => user.id === userId);
   const name = (user && user.name) || 'Anonymous';
   const dateFromTimestamp = new Date(timestamp);
   const time = `${dateFromTimestamp.getHours()}:${dateFromTimestamp.getMinutes()}`;
+
+  const [editMode, setEditMode] = useState(false);
+  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     initHandler();
@@ -53,11 +54,23 @@ const Message: React.FC<PropsInterface> = ({
           <div className="message__header-time">
             {time}
           </div>
+          {status === 'edited' &&
+            <div className="message__header-status">
+              - Edited -
+            </div>
+          }
         </div>
-        {text &&
+        {text && !editMode &&
           <div className="message__text">
             {text}
           </div>
+        }
+        {editMode &&
+          <textarea
+            className="message__textarea"
+            value={editText}
+            onChange={(event) => setEditText(event.target.value)}
+          ></textarea>
         }
         {status === 'deleted' &&
           <div className="message__text message__text--deleted">
@@ -65,9 +78,16 @@ const Message: React.FC<PropsInterface> = ({
           </div>
         }
       </div>
-      {actionsAllowed && status !== 'deleted' &&
+      {actionsAllowed && !editMode && status !== 'deleted' &&
         <div className="message__header-actions">
-          <button className="message__header-actions-item">
+          <button
+            className="message__header-actions-item"
+            type="button"
+            onClick={() => {
+              setEditText(text);
+              setEditMode(true);
+            }}
+          >
             <FontAwesomeIcon icon={faEdit} />
           </button>
           <button
@@ -76,6 +96,32 @@ const Message: React.FC<PropsInterface> = ({
             onClick={() => deleteHandler(id)}
           >
             <FontAwesomeIcon icon={faTrashAlt} />
+          </button>
+        </div>
+      }
+      {editMode &&
+        <div className="message__header-actions">
+          <button
+            className="message__header-actions-item"
+            type="button"
+            onClick={() => {
+              const trimmedEditText = editText.trim();
+
+              setEditMode(false);
+
+              if (trimmedEditText.length > 0 && trimmedEditText !== text) {
+                editHandler(id, trimmedEditText);
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </button>
+          <button
+            className="message__header-actions-item"
+            type="button"
+            onClick={() => setEditMode(false)}
+          >
+            <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
       }
