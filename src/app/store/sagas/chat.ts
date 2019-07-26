@@ -13,9 +13,11 @@ import {
   CHAT_EDIT_MESSAGE,
   ChatEditMessageAction,
 } from '../actions/chat';
+import { webSocketSendChatMessage } from '../actions/websocket';
 
 import { getMessages } from '../selectors/chat';
 import { getMyUserId } from '../selectors/users';
+
 
 function* createMessage() {
   yield takeEvery(CHAT_SUBMIT_TEXT, function* (action: ChatSubmitTextAction) {
@@ -33,6 +35,7 @@ function* createMessage() {
       ...messages,
       newMessage,
     ]));
+    yield put(webSocketSendChatMessage(newMessage));
   });
 }
 
@@ -43,14 +46,16 @@ function* editMessage() {
 
     if (targetMessageIndex > -1) {
       const newMessages = [...messages];
-
-      newMessages[targetMessageIndex] = {
+      const newMessage: MessageInterface = {
         ...newMessages[targetMessageIndex],
         text: action.text,
         status: 'edited',
-      };
+      }
+
+      newMessages[targetMessageIndex] = { ...newMessage };
 
       yield put(chatSaveMessages(newMessages));
+      yield put(webSocketSendChatMessage(newMessage));
     }
   });
 }
@@ -62,14 +67,16 @@ function* deleteMessage() {
 
     if (targetMessageIndex > -1) {
       const newMessages = [...messages];
-
-      newMessages[targetMessageIndex] = {
+      const newMessage: MessageInterface = {
         ...newMessages[targetMessageIndex],
         text: '',
         status: 'deleted',
       };
 
+      newMessages[targetMessageIndex] = { ...newMessage };
+
       yield put(chatSaveMessages(newMessages));
+      yield put(webSocketSendChatMessage(newMessage));
     }
   });
 }

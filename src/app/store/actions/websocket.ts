@@ -1,5 +1,7 @@
 import { Action, Dispatch } from 'redux';
 
+import { MessageInterface } from '../interfaces/messages';
+
 const prefix = '[WEBSOCKET]';
 
 export const WEBSOCKET_OPEN = `${prefix} OPEN`;
@@ -8,6 +10,7 @@ export const WEBSOCKET_MESSAGE = `${prefix} MESSAGE`;
 export const WEBSOCKET_CLOSE = `${prefix} CLOSE`;
 export const WEBSOCKET_RECONNECT = `${prefix} RECONNECT`;
 export const WEBSOCKET_REGISTER_USER = `${prefix} REGISTER_USER`;
+export const WEBSOCKET_SEND_CHAT_MESSAGE = `${prefix} SEND_CHAT_MESSAGE`;
 
 export interface WebSocketOpenAction extends Action {
   webSocket: WebSocket;
@@ -27,6 +30,10 @@ export interface WebSocketReconnectAction extends Action {
 
 export interface WebSocketRegisterUserAction extends Action {
   id: string;
+}
+
+export interface WebSocketSendChatMessageAction extends Action {
+  message: MessageInterface;
 }
 
 export const webSocketOpen = (webSocket: WebSocket): WebSocketOpenAction => ({
@@ -56,4 +63,9 @@ export const webSocketReconnect = (dispatch: Dispatch): WebSocketReconnectAction
 export const webSocketRegisterUser = (id: string): WebSocketRegisterUserAction => ({
   type: WEBSOCKET_REGISTER_USER,
   id
+});
+
+export const webSocketSendChatMessage = (message: MessageInterface): WebSocketSendChatMessageAction => ({
+  type: WEBSOCKET_SEND_CHAT_MESSAGE,
+  message,
 });

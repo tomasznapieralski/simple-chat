@@ -3,6 +3,7 @@ import express from 'express';
 import http from 'http';
 
 import { WebSocketMessageDataInterface } from '../src/app/store/interfaces/websockets';
+import { MessageInterface } from '../src/app/store/interfaces/messages';
 import { UserInterface } from '../src/app/store/interfaces/users';
 
 const port = process.env.PORT || 8080;
@@ -31,7 +32,42 @@ class Users {
   }
 };
 
+class Messages {
+  private data: MessageInterface[];
+
+  constructor() {
+    this.data = [];
+  }
+
+  addOrUpdate(message: MessageInterface): void {
+    const messageIndex = this.data.findIndex(data => data.id === message.id);
+
+    this.data = messageIndex > -1
+      ? this.data.map(data => data.id !== message.id ? data : { ...message })
+      : [...this.data, { ...message }]
+    ;
+  }
+
+  getAllMessages(): MessageInterface[] {
+    return this.data;
+  }
+}
+
 class Communication {
+  static sendMessageToAllClients(wss: WebSocket.Server, message: MessageInterface): void {
+    wss.clients.forEach(client => client.send(JSON.stringify({
+      type: 'message',
+      data: message,
+    } as WebSocketMessageDataInterface)));
+  };
+
+  static sendAllMessagesToClient(ws: WebSocket, messages: MessageInterface[]): void {
+    ws.send(JSON.stringify({
+      type: 'messages',
+      data: messages,
+    } as WebSocketMessageDataInterface));
+  }
+
   static sendUserToAllClients(wss: WebSocket.Server, user: UserInterface): void {
     wss.clients.forEach(client => client.send(JSON.stringify({
       type: 'user',
@@ -48,6 +84,7 @@ class Communication {
 }
 
 const users = new Users();
+const messages = new Messages();
 
 wss.on('connection', (ws: WebSocket) => {
   let myUser: UserInterface | null = null;
@@ -61,7 +98,14 @@ wss.on('connection', (ws: WebSocket) => {
           myUser = { ...(parseData.data as UserInterface) };
           users.addOrUpdate(myUser);
           Communication.sendAllUsersToClient(ws, users.getAllUsers());
+          Communication.sendAllMessagesToClient(ws, messages.getAllMessages());
           Communication.sendUserToAllClients(wss, myUser);
+          break;
+        }
+        case 'message': {
+          const message = { ...(parseData.data as MessageInterface) };
+          messages.addOrUpdate(message);
+          Communication.sendMessageToAllClients(wss, message);
           break;
         }
       }

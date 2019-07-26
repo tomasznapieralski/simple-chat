@@ -2,6 +2,7 @@ import { takeEvery, select, delay, put } from 'redux-saga/effects';
 
 import { UserInterface } from '../interfaces/users';
 import { WebSocketMessageDataInterface } from '../interfaces/websockets';
+import { MessageInterface } from '../interfaces/messages';
 
 import { ROOM_INIT, RoomInitAction } from '../actions/room';
 import {
@@ -17,12 +18,15 @@ import {
   WEBSOCKET_MESSAGE,
   WebSocketMessageAction,
   webSocketMessage,
+  WEBSOCKET_SEND_CHAT_MESSAGE,
+  WebSocketSendChatMessageAction,
 } from '../actions/websocket';
 import { usersSaveUsers } from '../actions/users';
+import { chatSaveMessages } from '../actions/chat';
 
 import { getMyUserId, getAllUsers } from '../selectors/users';
 import { getWebSocket } from '../selectors/websocket';
-
+import { getMessages } from '../selectors/chat';
 
 function* connectToServer() {
   yield takeEvery(
@@ -58,6 +62,17 @@ function* registerMyUser() {
   });
 }
 
+function* sendChatMessages() {
+  yield takeEvery(WEBSOCKET_SEND_CHAT_MESSAGE, function* (action: WebSocketSendChatMessageAction) {
+    const webSocket: WebSocket = yield select(getWebSocket);
+
+    webSocket.send(JSON.stringify({
+      data: action.message,
+      type: 'message',
+    } as WebSocketMessageDataInterface));
+  });
+}
+
 function* respondToMessages() {
   yield takeEvery(WEBSOCKET_MESSAGE, function* (action: WebSocketMessageAction) {
     const parseData: WebSocketMessageDataInterface = JSON.parse(String(action.message));
@@ -79,6 +94,26 @@ function* respondToMessages() {
           ));
           break;
         }
+        case 'messages': {
+          yield put(chatSaveMessages([...(parseData.data as MessageInterface[])]));
+          break;
+        }
+        case 'message': {
+          const message: MessageInterface = { ...parseData.data as MessageInterface };
+          const myUserId: string = yield select(getMyUserId);
+
+          if (message.userId !== myUserId) {
+            const messages: MessageInterface[] = yield select(getMessages);
+            const messageIndex = messages.findIndex(data => data.id === message.id);
+
+            yield put(chatSaveMessages(messageIndex > -1
+              ? messages.map(data => data.id !== message.id ? data : { ...message })
+              : [...messages, { ...message }]
+            ));
+          }
+
+          break;
+        }
       }
     }
   });
@@ -94,6 +129,7 @@ function* reconnectOnClose() {
 export default [
   connectToServer(),
   registerMyUser(),
+  sendChatMessages(),
   respondToMessages(),
   reconnectOnClose(),
 ];
