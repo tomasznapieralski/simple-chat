@@ -1,3 +1,4 @@
+import path from 'path';
 import WebSocket from 'ws';
 import express from 'express';
 import http from 'http';
@@ -6,82 +7,20 @@ import { WebSocketMessageDataInterface } from '../src/app/store/interfaces/webso
 import { MessageInterface } from '../src/app/store/interfaces/messages';
 import { UserInterface } from '../src/app/store/interfaces/users';
 
+import { Users } from './classes/users';
+import { Messages } from './classes/messages';
+import { Communication } from './classes/communication';
+
+const app = express()
+  .use(express.static(path.join(__dirname, '../../build')))
+  .get('*', function(request, response) {
+    response.sendfile(path.join(__dirname, '../../build/index.html'));
+  })
+;
+
 const port = process.env.PORT || 8080;
-const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
-class Users {
-  private data: UserInterface[];
-
-  constructor() {
-    this.data = [];
-  }
-
-  addOrUpdate(user: UserInterface): void {
-    const userIndex = this.data.findIndex(data => data.id === user.id);
-
-    this.data = userIndex > -1
-      ? this.data.map(data => data.id !== user.id ? data : { ...user })
-      : [...this.data, { ...user }]
-    ;
-  }
-
-  getAllUsers(): UserInterface[] {
-    return this.data;
-  }
-};
-
-class Messages {
-  private data: MessageInterface[];
-
-  constructor() {
-    this.data = [];
-  }
-
-  addOrUpdate(message: MessageInterface): void {
-    const messageIndex = this.data.findIndex(data => data.id === message.id);
-
-    this.data = messageIndex > -1
-      ? this.data.map(data => data.id !== message.id ? data : { ...message })
-      : [...this.data, { ...message }]
-    ;
-  }
-
-  getAllMessages(): MessageInterface[] {
-    return this.data;
-  }
-}
-
-class Communication {
-  static sendMessageToAllClients(wss: WebSocket.Server, message: MessageInterface): void {
-    wss.clients.forEach(client => client.send(JSON.stringify({
-      type: 'message',
-      data: message,
-    } as WebSocketMessageDataInterface)));
-  };
-
-  static sendAllMessagesToClient(ws: WebSocket, messages: MessageInterface[]): void {
-    ws.send(JSON.stringify({
-      type: 'messages',
-      data: messages,
-    } as WebSocketMessageDataInterface));
-  }
-
-  static sendUserToAllClients(wss: WebSocket.Server, user: UserInterface): void {
-    wss.clients.forEach(client => client.send(JSON.stringify({
-      type: 'user',
-      data: user,
-    } as WebSocketMessageDataInterface)));
-  };
-
-  static sendAllUsersToClient(ws: WebSocket, users: UserInterface[]): void {
-    ws.send(JSON.stringify({
-      type: 'users',
-      data: users,
-    } as WebSocketMessageDataInterface));
-  }
-}
 
 const users = new Users();
 const messages = new Messages();
