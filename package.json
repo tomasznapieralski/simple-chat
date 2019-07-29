@@ -38,7 +38,6 @@
     "build": "yarn front-build && yarn server-build",
     "front-start": "react-scripts start",
     "front-build": "react-scripts build",
-    "test": "react-scripts test",
     "server-build": "tsc --build server/tsconfig.json",
     "server-start": "node dist/server/server.js",
     "server-watch": "nodemon --watch server server/server.ts --exec 'yarn server-build && yarn server-start'"
