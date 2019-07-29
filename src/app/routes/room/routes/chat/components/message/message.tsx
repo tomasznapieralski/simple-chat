@@ -35,7 +35,8 @@ const Message: React.FC<PropsInterface> = ({
   const user = users.find(user => user.id === userId);
   const name = (user && user.name) || 'Anonymous';
   const dateFromTimestamp = new Date(timestamp);
-  const time = `${dateFromTimestamp.getHours()}:${dateFromTimestamp.getMinutes()}`;
+  const minutes = String(dateFromTimestamp.getMinutes());
+  const time = `${dateFromTimestamp.getHours()}:${minutes.length > 1 ? minutes : `0${minutes}`}`;
 
   const [editMode, setEditMode] = useState(false);
   const [editText, setEditText] = useState('');
