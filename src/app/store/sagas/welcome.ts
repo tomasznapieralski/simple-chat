@@ -23,6 +23,7 @@ function* createMyUser() {
       name: action.name,
       id: myUserId,
       active: true,
+      isBot: false,
     };
 
     yield put(usersSaveUsers([

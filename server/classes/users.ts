@@ -11,6 +11,7 @@ export class Users {
       id: uuid(),
       name: 'ChatBOT',
       active: false,
+      isBot: true,
     };
 
     this.data = [botUser];

@@ -61,7 +61,7 @@ const Message: React.FC<PropsInterface> = ({
           }
         </div>
         {text && !editMode &&
-          <div className="message__text">
+          <div className={classNames('message__text', { 'message__text--bot': (user && user.isBot) })}>
             {text}
           </div>
         }
