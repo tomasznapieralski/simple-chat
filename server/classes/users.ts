@@ -1,10 +1,20 @@
+import uuid from 'uuid';
+
 import { UserInterface } from '../../src/app/store/interfaces/users';
 
 export class Users {
   private data: UserInterface[];
+  private botUserId: string;
 
   constructor() {
-    this.data = [];
+    const botUser: UserInterface = {
+      id: uuid(),
+      name: 'ChatBOT',
+      active: false,
+    };
+
+    this.data = [botUser];
+    this.botUserId = botUser.id;
   }
 
   addOrUpdate(user: UserInterface): void {
@@ -18,5 +28,9 @@ export class Users {
 
   getAllUsers(): UserInterface[] {
     return this.data;
+  }
+
+  getBotUserId(): string {
+    return this.botUserId;
   }
 };

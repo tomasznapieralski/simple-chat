@@ -39,6 +39,11 @@ wss.on('connection', (ws: WebSocket) => {
           Communication.sendAllUsersToClient(ws, users.getAllUsers());
           Communication.sendAllMessagesToClient(ws, messages.getAllMessages());
           Communication.sendUserToAllClients(wss, myUser);
+
+          const message = messages.addBotMessage(`${myUser.name} joined.`, users.getBotUserId());
+
+          Communication.sendMessageToAllClients(wss, message);
+
           break;
         }
         case 'message': {
@@ -56,6 +61,10 @@ wss.on('connection', (ws: WebSocket) => {
       myUser.active = false;
       users.addOrUpdate(myUser);
       Communication.sendUserToAllClients(wss, myUser);
+
+      const message = messages.addBotMessage(`${myUser.name} left.`, users.getBotUserId());
+
+      Communication.sendMessageToAllClients(wss, message);
     }
   });
 });
