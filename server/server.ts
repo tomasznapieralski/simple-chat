@@ -7,6 +7,8 @@ import { WebSocketMessageDataInterface } from '../src/app/store/interfaces/webso
 import { MessageInterface } from '../src/app/store/interfaces/messages';
 import { UserInterface } from '../src/app/store/interfaces/users';
 
+import { atob } from './utils/base64';
+
 import { Users } from './classes/users';
 import { Messages } from './classes/messages';
 import { Communication } from './classes/communication';
@@ -29,7 +31,7 @@ wss.on('connection', (ws: WebSocket) => {
   let myUser: UserInterface | null = null;
 
   ws.on('message', (data) => {
-    const parseData: WebSocketMessageDataInterface | undefined = JSON.parse(data.toString());
+    const parseData: WebSocketMessageDataInterface | undefined = JSON.parse(atob(data.toString()));
 
     if (parseData) {
       switch (parseData.type) {

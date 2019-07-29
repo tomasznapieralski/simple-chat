@@ -53,10 +53,10 @@ function* registerMyUser() {
     const myUser = users.find(user => user.id === myUserId);
 
     if (myUser) {
-      webSocket.send(JSON.stringify({
+      webSocket.send(btoa(JSON.stringify({
         data: myUser,
         type: 'my-user',
-      } as WebSocketMessageDataInterface));
+      } as WebSocketMessageDataInterface)));
       yield put(webSocketRegisterUser(myUserId));
     }
   });
@@ -66,16 +66,16 @@ function* sendChatMessages() {
   yield takeEvery(WEBSOCKET_SEND_CHAT_MESSAGE, function* (action: WebSocketSendChatMessageAction) {
     const webSocket: WebSocket = yield select(getWebSocket);
 
-    webSocket.send(JSON.stringify({
+    webSocket.send(btoa(JSON.stringify({
       data: action.message,
       type: 'message',
-    } as WebSocketMessageDataInterface));
+    } as WebSocketMessageDataInterface)));
   });
 }
 
 function* respondToMessages() {
   yield takeEvery(WEBSOCKET_MESSAGE, function* (action: WebSocketMessageAction) {
-    const parseData: WebSocketMessageDataInterface = JSON.parse(String(action.message));
+    const parseData: WebSocketMessageDataInterface = JSON.parse(atob(String(action.message)));
 
     if (parseData) {
       switch (parseData.type) {
